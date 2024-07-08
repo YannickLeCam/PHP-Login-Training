@@ -10,6 +10,18 @@ $pdo = new PDO(
 );
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+function isStrongPassword($password) {
+    // Expression régulière pour vérifier la force du mot de passe
+    $regex = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{12,}$/';
+    
+    // Vérifie si la chaîne correspond à l'expression régulière
+    if (preg_match($regex, $password)) {
+        return true; // Le mot de passe est fort
+    } else {
+        return false; // Le mot de passe est faible
+    }
+}
+
 if (isset($_POST['subForm'])) {
     //Dans le cas ou un formulaire d'inscription vient d'etre soumit
     $pseudo=filter_input(INPUT_POST,'pseudo',FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -24,10 +36,15 @@ if (isset($_POST['subForm'])) {
                 throw new Exception("Il semblerait y avoit un problème sur la confirmation du mot du passe . . .", 1);
             }
     
-            if (strlen($pass)<8) {
+            if (strlen($pass)<11) {
                 throw new Exception("Il semblerait y avoir un problème sur la taille du mdp", 1);
                 
             }
+
+            if (!isStrongPassword($pass)) {
+                throw new Exception("Le mot de passe doit contenir : Une lettre minuscule , Une lettre Majuscule, un charactere spécial et un chiffre minimum");
+            }
+            
             $pass = password_hash($pass,PASSWORD_DEFAULT);
     
             if ($pseudo == "") {
@@ -99,7 +116,7 @@ if (isset($_POST['connectForm'])) {
             if (!password_verify($pass,$log['pass'])) {
                 throw new Exception("le mail ou le mot de passe semble etre invalide . . .", 1);
             }
-            
+
             $_SESSION['user']=$log;
             $_SESSION['success']='Vous vous etes bien connecté';
             
@@ -114,6 +131,14 @@ if (isset($_POST['connectForm'])) {
 
     }
 }
+
+if (isset($_POST['disconnectButton'])) {
+    $_SESSION=[];
+    $_SESSION['success']="Vous vous etes bien déconnecté !";
+    header('Location:./index.php');
+    die;
+}
+
 
 
 

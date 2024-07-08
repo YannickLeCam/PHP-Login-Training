@@ -21,7 +21,15 @@ session_start();
             echo '<p>'.$_SESSION['success'] . '</p>';
             unset($_SESSION['success']);
         }
-    ?>
+        if (isset($_SESSION['user'])) {
+            echo "<p>Bonjour ".$_SESSION['user']['pseudo']."</p>";
+            echo <<<HTML
+            <form action="./traitement.php" method='post' >
+                <input type="submit" name="disconnectButton" value="Se deconnecter">
+            </form>
+HTML;
+        }else {
+            echo <<<HTML
     <form action="./traitement.php" method="post">
         <label for="mail">Entrez votre mail :</label>
         <input type="email" name="mail" id="mailInput">
@@ -47,5 +55,10 @@ session_start();
 
         <input type="submit" name="subForm" value="S'inscrire">
     </form>
+
+HTML;
+        }
+    ?>
+
 </body>
 </html>
