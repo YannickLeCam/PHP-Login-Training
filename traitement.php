@@ -91,8 +91,7 @@ if (isset($_POST['connectForm'])) {
             $request->bindParam(':mail',$mail);
             $request->execute();
             $log=$request->fetch(PDO::FETCH_ASSOC);
-            var_dump($log);
-            die;
+
             if (empty($log)) {
                 throw new Exception("le mail ou le mot de passe semble etre invalide . . .", 1);
             }
@@ -100,6 +99,7 @@ if (isset($_POST['connectForm'])) {
             if (!password_verify($pass,$log['pass'])) {
                 throw new Exception("le mail ou le mot de passe semble etre invalide . . .", 1);
             }
+            
             $_SESSION['user']=$log;
             $_SESSION['success']='Vous vous etes bien connecté';
             
